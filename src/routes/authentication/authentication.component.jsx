@@ -1,14 +1,10 @@
 
-import { 
-  signInWithGooglePopup,
-  signInWithGoogleRedirect,
-   createUserDocumentFromAuth,
-    } from '../../utils/firebase/firebase.utils'
 
     import SignUpForm from '../../components/sign-up-form/sign-up-form.component';
+    import SignInForm from '../../components/sign-in-form/sign-in-form.component';
+    import './authentication.styles.scss'
 
-
-const SignIn = () => {
+const Authentication = () => {
   // //second argument [] tells useEffect to call this function only once 
   // useEffect(async () => {
   //   // get me the response for the redirect(signInWithGoogleRedirect) that just happened based on the auth
@@ -19,27 +15,19 @@ const SignIn = () => {
   //   }
   // }, [])
 
-    const logGoogleUser = async () => {
-      // used destructuring from the object recieved
-        const {user} = await signInWithGooglePopup();
-        const userDocRef = await createUserDocumentFromAuth(user);
-        
-        
-    }
+
 
 
 
 
   return (
-    <div>
-        <h1>Sign in page</h1>
-        <button onClick={logGoogleUser}>
-        sign in with google
-        </button>
+    <div className='authentication-container'>
+        <SignInForm />
         <SignUpForm />
+        
     </div>
 
   )
 }
 
-export default SignIn
+export default Authentication
