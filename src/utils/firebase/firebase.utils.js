@@ -4,7 +4,9 @@ import {getAuth,
         signInWithPopup,
         GoogleAuthProvider,
         createUserWithEmailAndPassword,
-        signInWithEmailAndPassword
+        signInWithEmailAndPassword,
+        signOut, 
+        onAuthStateChanged
     } from 'firebase/auth'
 
 
@@ -43,12 +45,9 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
     if(!userAuth) return;
     // database,users and an identifier which is a unique ID
     const userDocRef = doc(db, 'users',userAuth.uid)
-    console.log(userDocRef)
-
+  
     // getting the user data for userDocRef
     const userSnapshot = await getDoc(userDocRef)
-    console.log(userSnapshot)
-    console.log(userSnapshot.exists());
 
 
     // if user snapshot doesnt exist(!userSnapshot .exist())
@@ -97,3 +96,10 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
 
     return await signInWithEmailAndPassword(auth, email, password)
 }
+
+export const signOutUser =async  () => await signOut(auth);
+
+// callback function for wen authentication state changes e.g Sign In and Sign Out state
+// an open listener to check if auth states are changing.
+export const onAuthStateChangedListener = (callback) => 
+onAuthStateChanged(auth, callback);

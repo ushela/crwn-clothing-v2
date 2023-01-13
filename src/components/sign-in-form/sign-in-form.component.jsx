@@ -3,10 +3,12 @@ import { useState } from "react"
 
 import FormInput from "../form-input/form-input.component"
 import Button from "../button/button.component"
+
 import {  createUserDocumentFromAuth,
      signInWithGooglePopup, 
      signInAuthUserWithEmailAndPassword
     } from "../../utils/firebase/firebase.utils" 
+    
 
 import './sign-in-form.styles.scss'
 const defaultFormFields = {
@@ -20,7 +22,7 @@ const SignInForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields)
     const { email, password} = formFields;
 
-    console.log(formFields);
+
 
     const resetFormFields = () => {
         setFormFields(defaultFormFields);
@@ -28,8 +30,8 @@ const SignInForm = () => {
 
     const signInWithGoogle = async () => {
         // used destructuring from the object recieved
-          const {user} = await signInWithGooglePopup();
-         await createUserDocumentFromAuth(user);
+         await signInWithGooglePopup();
+        
           
           
       }
@@ -40,8 +42,10 @@ const SignInForm = () => {
 
 
         try{
-            const response = await signInAuthUserWithEmailAndPassword(email, password)
-            console.log(response)
+            await signInAuthUserWithEmailAndPassword(
+                email, 
+                password)
+        //setCurrentUser(user);
             resetFormFields();
         } catch(error){
                 switch(error.code){
