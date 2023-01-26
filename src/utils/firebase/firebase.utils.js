@@ -6,14 +6,18 @@ import {getAuth,
         createUserWithEmailAndPassword,
         signInWithEmailAndPassword,
         signOut, 
-        onAuthStateChanged
+        onAuthStateChanged,
     } from 'firebase/auth'
 
 
 import {getFirestore,
         doc,
         getDoc,
-        setDoc
+        setDoc,
+        collection,
+        writeBatch,
+        query,
+        getDocs
 } from 'firebase/firestore'
 
 const firebaseConfig = {
@@ -38,6 +42,73 @@ export const signInWithGooglePopup  = () => signInWithPopup(auth, googleProvider
 export const signInWithGoogleRedirect  = () => signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
+
+export const addCollectionAndDocuments = async (
+    collectionKey,
+     objectsToAdd) => {
+    const collectionRef = collection(db, collectionKey);
+    const batch = writeBatch(db);
+
+    objectsToAdd.forEach((object) =>{
+        //collection ref tell the doc method which db we are using 
+        const docRef = doc(collectionRef, object.title.toLowerCase());
+        batch.set(docRef, object)
+    });
+    await batch.commit();
+    console.log('done')
+}
+
+
+export const getCategoriesAndDocuments = async () => {
+   const collectionRef = collection(db, 'categories');
+   const q = query(collectionRef);
+
+   //fetching the document snapshots
+   const querySnapshot = await getDocs(q)
+   //access different document snapshots from query snapshots
+   //give an array of individual snapshot 
+
+    const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+       const {title, items} = docSnapshot.data();
+       acc[title.toLowerCase()] = items;
+       return acc;
+    }, {})
+   
+   return categoryMap;
+   
+   /*
+    hats{
+        title: 'Hats',
+        items: [
+            {},
+            {}        ]
+    }
+
+ */ 
+}
+
+
+
+// alternate way to add collection
+// export const addCollectionAndDocuments = async (
+//     collectionKey,
+//      objectsToAdd,
+//      field = 'title') => {
+//     const collectionRef = collection(db, collectionKey);
+//     const batch = writeBatch(db);
+
+//     objectsToAdd.forEach((object) =>{
+//         //collection ref tell the doc method which db we are using 
+//         const docRef = doc(collectionRef, object[field].toLowerCase());
+//         batch.set(docRef, object)
+//     });
+
+//     await batch.commit();
+//     console.log('done')
+// }
+
+
+
 
 //additionalInformation is for incase we recieve displayName which is an object
 export const createUserDocumentFromAuth = async (userAuth, additionalInformation) => {
